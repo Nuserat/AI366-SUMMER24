@@ -328,6 +328,7 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
+        pacman_position, visited_corners = state
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -337,9 +338,19 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
+         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            dx, dy = Actions.directionToVector(action)
+            next_x, next_y = int(pacman_position[0] + dx), int(pacman_position[1] + dy)
 
+            if not self.walls[next_x][next_y]:
+                next_position = (next_x, next_y)
+                if next_position in self.corners and next_position not in visited_corners:
+                    next_visited_corners = visited_corners + (next_position,)
+                else:
+                    next_visited_corners = visited_corners
 
-
+                cost = 1  # Assuming all steps have equal cost
+                successors.append(((next_position, next_visited_corners), action, cost))
 
             "*** YOUR CODE HERE ***"
 
