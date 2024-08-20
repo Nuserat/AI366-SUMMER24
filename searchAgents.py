@@ -287,35 +287,27 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
+        "*** CODE HERE ***"
 
-
-
-
-        "*** YOUR CODE HERE ***"
+        self.cornersVisited = [(corner, corner == self.startingPosition) for corner in self.corners]
 
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-
-
-
-
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "*** CODE HERE ***"
+        # Returns the start state (position, corners_visited).
+        return self.startingPosition, tuple([False] * 4)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
+        "*** CODE HERE ***"
+        #  Checks if all corners have been visited.
+        return all(state[1])
 
-
-
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -328,6 +320,7 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
+        pacman_position, visited_corners = state
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -337,12 +330,22 @@ class CornersProblem(search.SearchProblem):
             #   nextx, nexty = int(x + dx), int(y + dy)
             #   hitsWall = self.walls[nextx][nexty]
 
+         "*** CODE HERE ***"
+         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            dx, dy = Actions.directionToVector(action)
+            next_x, next_y = int(pacman_position[0] + dx), int(pacman_position[1] + dy)
 
+            if not self.walls[next_x][next_y]:
+                next_position = (next_x, next_y)
+                if next_position in self.corners and next_position not in visited_corners:
+                    next_visited_corners = visited_corners + (next_position,)
+                else:
+                    next_visited_corners = visited_corners
 
+                cost = 1  # Assuming all steps have equal cost
+                successors.append(((next_position, next_visited_corners), action, cost))
 
-
-            "*** YOUR CODE HERE ***"
-
+        "***Main CODE ***"
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -376,11 +379,22 @@ def cornersHeuristic(state, problem):
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
+    "*** CODE HERE ***"
+    current_position, visited_corners = state
 
+    unvisited_corners = [corner for corner in corners if corner not in visited_corners]
 
+    if not unvisited_corners:
+        return 0  # All corners have been visited, heuristic is 0
 
-    "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    max_distance = 0
+
+    for corner in unvisited_corners:
+        distance = util.manhattanDistance(current_position, corner)
+        if distance > max_distance:
+            max_distance = distance
+
+    return max_distance
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -474,11 +488,21 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
 
+    "*** CODE HERE ***"
+    food_list = foodGrid.asList()
+    
+    if len(food_list) == 0:
+        return 0  # No food left to eat
 
+    max_distance = 0
 
+    for food_pos in food_list:
+        distance = mazeDistance(position, food_pos, problem.startingGameState)
+        if distance > max_distance:
+            max_distance = distance
 
-    "*** YOUR CODE HERE ***"
-    return 0
+    return max_distance
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -507,13 +531,10 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
-
-
-
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "*** CODE HERE ***"
+        actions=search.bfs(problem)
+        return actions                                  
+     # calling the bfs we have implemented
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -547,12 +568,11 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         complete the problem definition.
         """
         x,y = state
+        "*** CODE HERE ***"
 
+        food_positions = self.food.asList()
 
-
-
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return state in food_positions
 
 def mazeDistance(point1, point2, gameState):
     """

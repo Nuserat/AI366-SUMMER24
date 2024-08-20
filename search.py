@@ -92,7 +92,6 @@ def depthFirstSearch(problem):
                     stack.append((successor, actions + [action], visited.copy()))
     
     return []
-util.raiseNotDefined()
 
 from collections import deque #deque (queue) to facilitate BFS, which operates in a FIFO manner.
 #deque (double-ended queue) for BFS to efficiently append and pop elements from both ends.
@@ -115,7 +114,6 @@ def breadthFirstSearch(problem):
                     queue.append((successor, actions + [action]))
 
     return []  #first time encounter the goal state, we return the accumulated actions.
-util.raiseNotDefined()
 
 
 def uniformCostSearch(problem):
@@ -141,7 +139,6 @@ def uniformCostSearch(problem):
                     priority_queue.append((new_cost, (successor, actions + [action])))
 
     return []
-util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
     """
@@ -176,7 +173,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     priority_queue.append((new_cost + heuristic(successor, problem), (successor, actions + [action])))
 
     return []
-util.raiseNotDefined()
 
 
 # Abbreviations
